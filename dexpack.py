@@ -1,8 +1,5 @@
-import re
 from base64 import b64decode
 from contextlib import suppress
-from dataclasses import dataclass
-from dataclasses import field as datafield
 from datetime import datetime
 from logging import getLogger
 from os import mkdir, path
@@ -14,7 +11,6 @@ from discord import Color, Embed
 from discord.ext import commands
 from requests import codes as request_codes
 from requests import get as request_get
-from yaml import dump as yaml_dump
 from yaml import safe_load as yaml_load
 
 dir_type = "ballsdex" if path.isdir("ballsdex") else "carfigures"
@@ -43,7 +39,7 @@ def verify_packages():
         "https://api.github.com/repos/Dotsian/DexPack/contents/verified.txt"
     )
 
-    if r.status_code != request_codes.ok:
+    if request.status_code != request_codes.ok:
         log.warning("Failed to verify packages.")
         return
 
@@ -89,10 +85,10 @@ class DexPack(commands.Cog):
             "https://api.github.com/repos/Dotsian/DexPack/contents/pyproject.toml"
         )
 
-        if r.status_code != request_codes.ok:
+        if request.status_code != request_codes.ok:
             return
 
-        content = b64decode(r.json()["content"]).decode("UTF-8").rstrip()
+        content = b64decode(request.json()["content"]).decode("UTF-8").rstrip()
         new_version = content.split('version = "')[1].split('"')[0]
 
         if new_version != __version__:
@@ -335,8 +331,8 @@ class DexPack(commands.Cog):
             "https://api.github.com/repos/Dotsian/DexPack/contents/installer.py"
         )
 
-        if r.status_code == request_codes.ok:
-            content = b64decode(r.json()["content"])
+        if request.status_code == request_codes.ok:
+            content = b64decode(request.json()["content"])
             await ctx.invoke(self.bot.get_command("eval"), body=content.decode("UTF-8"))
         else:
             await ctx.send(
