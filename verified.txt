@@ -1,0 +1,5 @@
+# This file contains a list of all verified packages.
+# To verify your package, message `dot_zz` on Discord.
+
+
+BossPackageBD : MoOfficial0000/BossPackageBD
